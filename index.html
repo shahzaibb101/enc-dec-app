@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <style>
+    #sidebar {
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-3 bg-light" id="sidebar">
+        <ul class="nav flex-column" style="margin-top: 30px;">
+          <li class="nav-item">
+            <a class="nav-link" href="#file" style="font-size: 25px;">Encrypt & Decrypt File</a>
+          </li>
+          <li class="nav-item" style="margin-top: 10px;">
+            <a class="nav-link" href="#text" style="font-size: 25px;">Encrypt & Decrypt Text</a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-9">
+        <section id="file" class="py-5">
+          <h2 class="mb-4">Encrypt & Decrypt File</h2>
+          <div class="mb-3">
+            <label for="fileInput" class="form-label">Choose File:</label>
+            <input type="file" class="form-control" id="fileInput">
+          </div>
+          <div class="mb-3">
+            <label for="key" class="form-label">Key:</label>
+            <input type="text" class="form-control" id="key">
+          </div>
+          <button class="btn btn-primary" onclick="encryptFile()">Encrypt</button>
+          <div class="mb-3">
+            <label for="cipherText" class="form-label">Cipher Text:</label>
+            <input type="text" class="form-control" id="cipherText">
+          </div>
+          <div class="mb-3">
+            <label for="decryptKey" class="form-label">Key:</label>
+            <input type="text" class="form-control" id="decryptKey">
+          </div>
+          <button class="btn btn-primary" onclick="decryptFile()">Decrypt</button>
+          <div id="fileResult" class="mt-4"></div>
+        </section>
+        <section id="text" class="py-5" style="display:none;">
+          <h2 class="mb-4">Encrypt & Decrypt Text</h2>
+          <div class="mb-3">
+            <label for="plainText" class="form-label">Plain Text:</label>
+            <input type="text" class="form-control" id="plainText">
+          </div>
+          <div class="mb-3">
+            <label for="textKey" class="form-label">Key:</label>
+            <input type="text" class="form-control" id="textKey">
+          </div>
+          <button class="btn btn-primary" onclick="encryptText()">Encrypt</button>
+          <div class="mt-4">
+            <label for="cipherText" class="form-label">Cipher Text:</label>
+            <input type="text" class="form-control" id="textCipherText">
+          </div>
+          <div class="mb-3">
+            <label for="decryptKeyText" class="form-label">Key:</label>
+            <input type="text" class="form-control" id="decryptKeyText">
+          </div>
+          <button class="btn btn-primary" onclick="decryptText()">Decrypt</button>
+          <div id="textResult" class="mt-4"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function encryptFile() {
+      var fileInput = document.getElementById("fileInput");
+      var key = document.getElementById("key").value;
+      var fileResult = document.getElementById("fileResult");
+
+      var file = fileInput.files[0];
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var encrypted = CryptoJS.AES.encrypt(e.target.result, key).toString();
+        fileResult.innerHTML = "Encrypted content: " + encrypted;
+      };
+      reader.readAsText(file);
+    }
+
+    function decryptFile() {
+      var cipherText = document.getElementById("cipherText").value;
+      var key = document.getElementById("decryptKey").value;
+      var fileResult = document.getElementById("fileResult");
+
+      var decrypted = CryptoJS.AES.decrypt(cipherText, key).toString(CryptoJS.enc.Utf8);
+      fileResult.innerHTML = "Decrypted content: " + decrypted;
+    }
+
+    function encryptText() {
+      var plainText = document.getElementById("plainText").value;
+      var key = document.getElementById("textKey").value;
+      var textResult = document.getElementById("textResult");
+
+      var encrypted = CryptoJS.AES.encrypt(plainText, key).toString();
+      textResult.innerHTML = "Encrypted text: " + encrypted;
+    }
+
+    function decryptText() {
+      var cipherText = document.getElementById("textCipherText").value;
+      var key = document.getElementById("decryptKeyText").value;
+      var textResult = document.getElementById("textResult");
+
+      var decrypted = CryptoJS.AES.decrypt(cipherText, key).toString(CryptoJS.enc.Utf8);
+      textResult.innerHTML = "Decrypted text: " + decrypted;
+    }
+
+    // Show the appropriate section based on the clicked link in the sidebar
+    window.addEventListener("hashchange", function() {
+      var fileSection = document.getElementById("file");
+      var textSection = document.getElementById("text");
+
+      if (location.hash === "#file") {
+        fileSection.style.display = "block";
+        textSection.style.display = "none";
+      } else if (location.hash === "#text") {
+        fileSection.style.display = "none";
+        textSection.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
