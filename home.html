@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <style>
     #sidebar {
       height: 100vh;
@@ -71,17 +73,62 @@
     </div>
   </div>
 
+  <!-- Encryption Result Modal -->
+  <div class="modal fade" id="encryptionModal" tabindex="-1" aria-labelledby="encryptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="encryptionModalLabel">Encryption Result</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="encryptionResult"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decryption Result Modal -->
+  <div class="modal fade" id="decryptionModal" tabindex="-1" aria-labelledby="decryptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="decryptionModalLabel">Decryption Result</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="decryptionResult"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
+    function displayEncryptionResult(result) {
+      var encryptionResult = document.getElementById("encryptionResult");
+      encryptionResult.innerText = result;
+      
+      var encryptionModal = new bootstrap.Modal(document.getElementById("encryptionModal"));
+      encryptionModal.show();
+    }
+
+    function displayDecryptionResult(result) {
+      var decryptionResult = document.getElementById("decryptionResult");
+      decryptionResult.innerText = result;
+      
+      var decryptionModal = new bootstrap.Modal(document.getElementById("decryptionModal"));
+      decryptionModal.show();
+    }
+
     function encryptFile() {
       var fileInput = document.getElementById("fileInput");
       var key = document.getElementById("key").value;
-      var fileResult = document.getElementById("fileResult");
 
       var file = fileInput.files[0];
       var reader = new FileReader();
       reader.onload = function(e) {
         var encrypted = CryptoJS.AES.encrypt(e.target.result, key).toString();
-        fileResult.innerHTML = "Encrypted content: " + encrypted;
+        displayEncryptionResult("Encrypted content: " + encrypted);
       };
       reader.readAsText(file);
     }
@@ -89,28 +136,25 @@
     function decryptFile() {
       var cipherText = document.getElementById("cipherText").value;
       var key = document.getElementById("decryptKey").value;
-      var fileResult = document.getElementById("fileResult");
 
       var decrypted = CryptoJS.AES.decrypt(cipherText, key).toString(CryptoJS.enc.Utf8);
-      fileResult.innerHTML = "Decrypted content: " + decrypted;
+      displayDecryptionResult("Decrypted content: " + decrypted);
     }
 
     function encryptText() {
       var plainText = document.getElementById("plainText").value;
       var key = document.getElementById("textKey").value;
-      var textResult = document.getElementById("textResult");
 
       var encrypted = CryptoJS.AES.encrypt(plainText, key).toString();
-      textResult.innerHTML = "Encrypted text: " + encrypted;
+      displayEncryptionResult("Encrypted text: " + encrypted);
     }
 
     function decryptText() {
       var cipherText = document.getElementById("textCipherText").value;
       var key = document.getElementById("decryptKeyText").value;
-      var textResult = document.getElementById("textResult");
 
       var decrypted = CryptoJS.AES.decrypt(cipherText, key).toString(CryptoJS.enc.Utf8);
-      textResult.innerHTML = "Decrypted text: " + decrypted;
+      displayDecryptionResult("Decrypted text: " + decrypted);
     }
 
     // Show the appropriate section based on the clicked link in the sidebar
