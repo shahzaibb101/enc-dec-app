@@ -1,13 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <style>
     #sidebar {
       height: 100vh;
+    }
+
+    .modal-dialog {
+      max-width: 80%;
+      margin: 1.75rem auto;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .modal-body {
+      max-height: 60vh;
+      overflow-y: auto;
     }
   </style>
 </head>
@@ -74,52 +89,31 @@
   </div>
 
   <!-- Encryption Result Modal -->
-  <div class="modal fade" id="encryptionModal" tabindex="-1" aria-labelledby="encryptionModalLabel" aria-hidden="true">
+  <div class="modal fade" id="encryptionResultModal" tabindex="-1" aria-labelledby="encryptionResultModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="encryptionModalLabel">Encryption Result</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
         <div class="modal-body">
-          <div id="encryptionResult"></div>
+          <h5 class="modal-title" id="encryptionResultModalLabel">Encryption Result</h5>
+          <div id="encryptionResultModalBody"></div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Decryption Result Modal -->
-  <div class="modal fade" id="decryptionModal" tabindex="-1" aria-labelledby="decryptionModalLabel" aria-hidden="true">
+  <div class="modal fade" id="decryptionResultModal" tabindex="-1" aria-labelledby="decryptionResultModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="decryptionModalLabel">Decryption Result</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
         <div class="modal-body">
-          <div id="decryptionResult"></div>
+          <h5 class="modal-title" id="decryptionResultModalLabel">Decryption Result</h5>
+          <div id="decryptionResultModalBody"></div>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    function displayEncryptionResult(result) {
-      var encryptionResult = document.getElementById("encryptionResult");
-      encryptionResult.innerText = result;
-      
-      var encryptionModal = new bootstrap.Modal(document.getElementById("encryptionModal"));
-      encryptionModal.show();
-    }
-
-    function displayDecryptionResult(result) {
-      var decryptionResult = document.getElementById("decryptionResult");
-      decryptionResult.innerText = result;
-      
-      var decryptionModal = new bootstrap.Modal(document.getElementById("decryptionModal"));
-      decryptionModal.show();
-    }
-
+    // Encrypt the file content and display the result in a modal overlay
     function encryptFile() {
       var fileInput = document.getElementById("fileInput");
       var key = document.getElementById("key").value;
@@ -128,33 +122,54 @@
       var reader = new FileReader();
       reader.onload = function(e) {
         var encrypted = CryptoJS.AES.encrypt(e.target.result, key).toString();
-        displayEncryptionResult("Encrypted content: " + encrypted);
+        displayEncryptionResult(encrypted);
       };
       reader.readAsText(file);
     }
 
+    // Decrypt the cipher text and display the result in a modal overlay
     function decryptFile() {
       var cipherText = document.getElementById("cipherText").value;
       var key = document.getElementById("decryptKey").value;
 
       var decrypted = CryptoJS.AES.decrypt(cipherText, key).toString(CryptoJS.enc.Utf8);
-      displayDecryptionResult("Decrypted content: " + decrypted);
+      displayDecryptionResult(decrypted);
     }
 
+    // Encrypt the plain text and display the result in a modal overlay
     function encryptText() {
       var plainText = document.getElementById("plainText").value;
       var key = document.getElementById("textKey").value;
 
       var encrypted = CryptoJS.AES.encrypt(plainText, key).toString();
-      displayEncryptionResult("Encrypted text: " + encrypted);
+      displayEncryptionResult(encrypted);
     }
 
+    // Decrypt the cipher text and display the result in a modal overlay
     function decryptText() {
       var cipherText = document.getElementById("textCipherText").value;
       var key = document.getElementById("decryptKeyText").value;
 
       var decrypted = CryptoJS.AES.decrypt(cipherText, key).toString(CryptoJS.enc.Utf8);
-      displayDecryptionResult("Decrypted text: " + decrypted);
+      displayDecryptionResult(decrypted);
+    }
+
+    // Display the encryption result in a modal overlay
+    function displayEncryptionResult(result) {
+      var modalBody = document.getElementById("encryptionResultModalBody");
+      modalBody.innerText = result;
+
+      var encryptionResultModal = new bootstrap.Modal(document.getElementById("encryptionResultModal"));
+      encryptionResultModal.show();
+    }
+
+    // Display the decryption result in a modal overlay
+    function displayDecryptionResult(result) {
+      var modalBody = document.getElementById("decryptionResultModalBody");
+      modalBody.innerText = result;
+
+      var decryptionResultModal = new bootstrap.Modal(document.getElementById("decryptionResultModal"));
+      decryptionResultModal.show();
     }
 
     // Show the appropriate section based on the clicked link in the sidebar
